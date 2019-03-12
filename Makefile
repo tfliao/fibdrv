@@ -23,6 +23,9 @@ load:
 	sudo insmod $(TARGET_MODULE).ko
 unload:
 	sudo rmmod $(TARGET_MODULE) || true >/dev/null
+reload: $(TARGET_MODULE).ko
+	sudo rmmod $(TARGET_MODULE) || true >/dev/null
+	sudo insmod $(TARGET_MODULE).ko
 
 client: client.c
 	$(CC) -o $@ $^

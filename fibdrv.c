@@ -62,7 +62,13 @@ static ssize_t fib_read(struct file *file,
                         size_t size,
                         loff_t *offset)
 {
-    return (ssize_t) fib_sequence(*offset);
+    ssize_t r;
+    ktime_t begin = ktime_get();
+    r = fib_sequence(*offset);
+    struct timespec64 ts = ktime_to_timespec64(ktime_get() - begin);
+    printk(KERN_INFO "fib_sequence(%lld) takes %lld.%09ld seconds\n",
+           (long long) *offset, (long long) ts.tv_sec, (long) ts.tv_nsec);
+    return r;
 }
 
 /* write operation is skipped */

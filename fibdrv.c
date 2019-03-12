@@ -1,3 +1,5 @@
+// vim: ts=4:sw=4:expandtab
+
 #include <linux/cdev.h>
 #include <linux/device.h>
 #include <linux/fs.h>

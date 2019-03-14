@@ -8,6 +8,7 @@
 #include <linux/kernel.h>
 #include <linux/module.h>
 #include <linux/mutex.h>
+#include <linux/thread_info.h>
 
 MODULE_LICENSE("Dual MIT/GPL");
 MODULE_AUTHOR("National Cheng Kung University, Taiwan");
@@ -20,6 +21,8 @@ MODULE_VERSION("0.1");
  * ssize_t can't fit the number > 92
  */
 #define MAX_LENGTH 92
+
+#define DISABLE_MUTEX
 
 static dev_t fib_dev = 0;
 static struct cdev *fib_cdev;
@@ -43,16 +46,22 @@ static long long fib_sequence(long long k)
 
 static int fib_open(struct inode *inode, struct file *file)
 {
+#ifndef DISABLE_MUTEX
     if (!mutex_trylock(&fib_mutex)) {
         printk(KERN_ALERT "fibdrv is in use");
         return -EBUSY;
     }
+#endif /* DISABLE_MUTEX */
+    printk(KERN_DEBUG "fibonacci opened by %d\n", get_current()->pid);
     return 0;
 }
 
 static int fib_release(struct inode *inode, struct file *file)
 {
+#ifndef DISABLE_MUTEX
     mutex_unlock(&fib_mutex);
+#endif /* DISABLE_MUTEX */
+    printk(KERN_DEBUG "fibonacci closed by %d\n", get_current()->pid);
     return 0;
 }
 

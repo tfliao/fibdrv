@@ -22,9 +22,10 @@ clean:
 load:
 	sudo insmod $(TARGET_MODULE).ko
 unload:
-	sudo rmmod $(TARGET_MODULE) || true >/dev/null
+	sudo rmmod $(TARGET_MODULE)
+
 reload: $(TARGET_MODULE).ko
-	sudo rmmod $(TARGET_MODULE) || true >/dev/null
+	-sudo rmmod $(TARGET_MODULE)
 	sudo insmod $(TARGET_MODULE).ko
 
 client: client.c
